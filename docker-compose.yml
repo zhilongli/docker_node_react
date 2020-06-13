@@ -1,0 +1,41 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=zhilong
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=test_sport
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+  
+  web:
+    container_name: backend
+    build: ./server
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    command: /usr/src/app/node_modules/.bin/nodemon src/index.js
+    volumes:
+      - ./server/:/usr/src/app/server
+      - /usr/src/app/server/node_modules
+    environment: 
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+
+  react:
+    container_name: react-app
+    build: ./client
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client/:/usr/src/app
+      - /usr/src/app/node_modules
+    environment: 
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
