@@ -18,9 +18,6 @@ app.listen(port, () => {
 })
 
 app.get('/', (request, response) => {
-  // response.json({
-  //     info: 'Node.js, express, postgres'
-  // })
   console.log("test info!")
   console.log("got home directory request!")
   response.send({

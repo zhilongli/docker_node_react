@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
-
+import UserTable from './table'
 
 class Users extends Component {
   state = {
@@ -93,7 +93,7 @@ class App extends Component {
           </ul>
           <Switch>
             <Route exact path='/' component={Home}></Route>
-            <Route exact path='/users' component={Users}></Route>
+            <Route exact path='/users' component={UserTable}></Route>
             <Route exact path='/about' component={About}></Route>
           </Switch>
         </div>
