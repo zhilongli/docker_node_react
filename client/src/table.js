@@ -12,6 +12,39 @@ const TableHeader = () => {
     )
 }
 
+class AddUser extends Component {
+    state = {
+        FirstName: "",
+        LastName: ""
+    };
+
+    handleSubmit = (event) => {
+        alert('A name was submitted: ' + this.state.FirstName);
+        event.preventDefault();
+    }
+
+    handleChange = (event) => {
+        this.setState({ FirstName: event.target.FirstName })
+    };
+
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    FirstName:
+                    <input
+                        type="text"
+                        value={this.state.FirstName}
+                        onChange={this.handleChange}
+                    />
+                </label>
+                <input type="submit" value="Submit" />
+            </form>
+        );
+    }
+}
+
 const UserRows = props => {
     const rows = props.UserData.map((row, index) => {
         return (
@@ -24,6 +57,8 @@ const UserRows = props => {
     });
     return <tbody>{rows}</tbody>
 }
+
+
 
 class UserTable extends Component {
     state = {
@@ -54,6 +89,10 @@ class UserTable extends Component {
         });
     };
 
+    addUser() {
+
+    }
+
     render() {
         console.log("Rendering users page")
         return (
@@ -65,8 +104,10 @@ class UserTable extends Component {
                 This is the users page!
                 <table>
                     <TableHeader />
-                    <UserRows UserData={this.state.UserData} removeUser={this.removeUser}/>
+                    <UserRows UserData={this.state.UserData} removeUser={this.removeUser} />
                 </table>
+                <AddUser />
+
             </div>
         );
     }
