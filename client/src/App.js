@@ -3,7 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import UserTable from './table'
-import Canvas from './animations'
+import DrawCanvas from './animations'
+import BubblesCanvas from './bubbles'
 
 
 class Home extends Component {
@@ -52,14 +53,18 @@ class App extends Component {
               <Link to="/users">Registered Users</Link>
             </li>
             <li>
-              <Link to="/canvas">HTML animations</Link>
+              <Link to="/drawcanvas">Canvas for free drawing</Link>
+            </li>
+            <li>
+              <Link to="/bubbles">Canvas for bubble animations</Link>
             </li>
           </ul>
           <Switch>
             <Route exact path='/' component={Home}></Route>
             <Route exact path='/users' component={UserTable}></Route>
             <Route exact path='/about' component={About}></Route>
-            <Route exact path='/canvas' component={Canvas}></Route>
+            <Route exact path='/drawcanvas' component={DrawCanvas}></Route>
+            <Route exact path='/bubbles' component={BubblesCanvas}></Route>
           </Switch>
         </div>
       </Router>

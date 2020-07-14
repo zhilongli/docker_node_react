@@ -5,7 +5,7 @@ let start = {x:0, y:0};
 let end = {x:0, y:0};
 var rect;
 
-class Canvas extends Component {
+class DrawCanvas extends Component {
 
     constructor(props) {
         super(props);
@@ -67,7 +67,7 @@ class Canvas extends Component {
 
     render() {
         return (
-            <div className="Canvas">
+            <div className="DrawCanvas">
                 <canvas
                     ref={this.canvasRef}
                     width={window.innerWidth}
@@ -82,4 +82,4 @@ class Canvas extends Component {
     }
 }
 
-export default Canvas;
+export default DrawCanvas;
