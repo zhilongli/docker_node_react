@@ -1,13 +1,15 @@
-import React, { Component } from "react"
-
+import React, { Component } from "react";
+import { Slider } from "@material-ui/core";
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 
 
 class Ball {
-    constructor(xPos, yPos, rad, ctx, canvas) {
+    constructor(xPos, yPos, rad, ctx, canvas, gravity) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.rad = rad;
-        this.grav = 0.1;
+        this.grav = gravity;
         this.vy = 0.1;
         this.vx = 0.1;
         this.rest = 0.9;
@@ -17,11 +19,6 @@ class Ball {
         console.log("CREATING BALL: ", this.canvas);
     }
 
-
-    animate = () => {
-        // setInterval(this.update, 1000 / 60);
-        window.requestAnimationFrame(this.update)
-    }
 
     update = () => {
         this.vy += this.grav;
@@ -36,7 +33,7 @@ class Ball {
     }
 
     drawBall = () => {
-        this.ctx.clearRect(this.xPos-1.5*this.rad, this.yPos-1.5*this.rad, 3*this.rad, 3*this.rad);
+        this.ctx.clearRect(this.xPos - 2 * this.rad, this.yPos - 2 * this.rad, 4 * this.rad, 4 * this.rad);
         this.ctx.beginPath();
         this.ctx.arc(this.xPos, this.yPos, this.rad, 0, Math.PI * 2, true);
         this.ctx.closePath();
@@ -52,7 +49,7 @@ class BubbleCanvas extends Component {
         this.canvasRef = React.createRef();
         this.drawCircle = this.drawCircle.bind(this)
         this.clickHandler = this.clickHandler.bind(this)
-
+        this.gravity = 0.5
     };
 
     componentDidMount() {
@@ -81,11 +78,23 @@ class BubbleCanvas extends Component {
         const rect = this.canvas.getBoundingClientRect();
         const xPos = ev.clientX - rect.left;
         const yPos = ev.clientY - rect.top;
-        var ball = new Ball(xPos, yPos, 10, this.ctx, this.canvas);
+        var ball = new Ball(xPos, yPos, 10, this.ctx, this.canvas, this.gravity);
         window.requestAnimationFrame(ball.update)
     };
 
+    gravSlider = (event, value) => {
+        console.log("new gravity is ", value)
+        this.gravity = value;
+    };
+
+
+
     render() {
+        // const [value, setValue] = React.useState(30);
+
+        // const handleChange = (event, newValue) => {
+        //   setValue(newValue);
+        // };
         return (
             <div className="BubbleCanvas">
                 <canvas
@@ -93,6 +102,18 @@ class BubbleCanvas extends Component {
                     width={window.innerWidth}
                     height={window.innerHeight}
                     onClick={ev => this.clickHandler(ev)}
+                />
+                <Typography id="continuous-slider" gutterBottom>
+                    Gravity
+                </Typography>
+                <Slider
+                    aria-labelledby="continuous-slider"
+                    defaultValue={0.5}
+                    step={0.01}
+                    max={1}
+                    min={0}
+                    valueLabelDisplay="on"
+                    onChange={this.gravSlider}
                 />
             </div>
         );
