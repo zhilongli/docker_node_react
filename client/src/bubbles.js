@@ -3,42 +3,60 @@ import { Slider } from "@material-ui/core";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
-
 class Ball {
-    constructor(xPos, yPos, rad, ctx, canvas, gravity) {
+    constructor(xPos, yPos, rad, gravity, ctx, canvas) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.rad = rad;
         this.grav = gravity;
-        this.vy = 0.1;
-        this.vx = 0.1;
+        this.vy = 0;
+        this.vx = 0;
         this.rest = 0.9;
+        console.log("CREATING BALL: ", xPos, yPos);
+        this.ctx = ctx;
+        this.canvas = canvas;
+        this.color = 'hsl(' + 360 * Math.random() + ', 50%, 50%)';
+
+    }
+
+}
+
+class Balls {
+    constructor(ctx, canvas) {
+        this.allBalls = [];
         this.ctx = ctx;
         // this.ctx.globalCompositeOperation = 'copy'
         this.canvas = canvas;
-        console.log("CREATING BALL: ", this.canvas);
     }
 
+
+    updateBall = (ball) => {
+        ball.vy += ball.grav;
+        ball.xPos += ball.vx;
+        ball.yPos += ball.vy;
+        if (ball.yPos > this.canvas.height - ball.rad) {
+            ball.yPos = this.canvas.height - ball.rad;
+            ball.vy *= -ball.rest;
+        }
+    }
 
     update = () => {
-        this.vy += this.grav;
-        this.xPos += this.vx;
-        this.yPos += this.vy;
-        if (this.yPos > this.canvas.height - this.rad) {
-            this.yPos = this.canvas.height - this.rad;
-            this.vy *= -this.rest;
-        }
-        this.drawBall();
+        this.allBalls.forEach(this.updateBall);
+        this.ctx.fillStyle = 'rgba(1, 1, 1, 0.25)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.allBalls.forEach(this.drawBall);
         window.requestAnimationFrame(this.update)
+
     }
 
-    drawBall = () => {
-        this.ctx.clearRect(this.xPos - 2 * this.rad, this.yPos - 2 * this.rad, 4 * this.rad, 4 * this.rad);
+    drawBall = (ball) => {
+        // this.ctx.clearRect(this.xPos - 2 * this.rad, this.yPos - 2 * this.rad, 4 * this.rad, 4 * this.rad);
         this.ctx.beginPath();
-        this.ctx.arc(this.xPos, this.yPos, this.rad, 0, Math.PI * 2, true);
+        this.ctx.arc(ball.xPos, ball.yPos, ball.rad, 0, Math.PI * 2, true);
         this.ctx.closePath();
+        // this.ctx.fillStyle = 'Tomato'
+        this.ctx.fillStyle = ball.color;
         this.ctx.fill();
-
     }
 
 }
@@ -55,7 +73,10 @@ class BubbleCanvas extends Component {
     componentDidMount() {
         this.canvas = this.canvasRef.current;
         this.ctx = this.canvas.getContext("2d")
+        this.balls = new Balls(this.ctx, this.canvas);
         // this.ctx.globalCompositeOperation = 'copy'
+        this.balls.update();
+
     };
 
     drawCircle(radius, ev) {
@@ -78,8 +99,11 @@ class BubbleCanvas extends Component {
         const rect = this.canvas.getBoundingClientRect();
         const xPos = ev.clientX - rect.left;
         const yPos = ev.clientY - rect.top;
-        var ball = new Ball(xPos, yPos, 10, this.ctx, this.canvas, this.gravity);
-        window.requestAnimationFrame(ball.update)
+        let ball = new Ball(xPos, yPos, 10, this.gravity, this.ctx, this.canvas);
+        this.balls.allBalls.push(ball);
+        console.log('all balls now: ', this.balls.allBalls)
+        // this.balls.update();
+        // window.requestAnimationFrame(this.balls.update)
     };
 
     gravSlider = (event, value) => {
@@ -90,11 +114,6 @@ class BubbleCanvas extends Component {
 
 
     render() {
-        // const [value, setValue] = React.useState(30);
-
-        // const handleChange = (event, newValue) => {
-        //   setValue(newValue);
-        // };
         return (
             <div className="BubbleCanvas">
                 <canvas
