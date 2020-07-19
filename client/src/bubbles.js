@@ -4,14 +4,14 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
 class Ball {
-    constructor(xPos, yPos, rad, gravity, ctx, canvas) {
+    constructor(xPos, yPos, rad, gravity, rest, ctx, canvas) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.rad = rad;
         this.grav = gravity;
         this.vy = 0;
         this.vx = 0;
-        this.rest = 0.9;
+        this.rest = rest;
         console.log("CREATING BALL: ", xPos, yPos);
         this.ctx = ctx;
         this.canvas = canvas;
@@ -68,6 +68,7 @@ class BubbleCanvas extends Component {
         this.drawCircle = this.drawCircle.bind(this)
         this.clickHandler = this.clickHandler.bind(this)
         this.gravity = 0.5
+        this.rest = 0.9
     };
 
     componentDidMount() {
@@ -99,7 +100,7 @@ class BubbleCanvas extends Component {
         const rect = this.canvas.getBoundingClientRect();
         const xPos = ev.clientX - rect.left;
         const yPos = ev.clientY - rect.top;
-        let ball = new Ball(xPos, yPos, 10, this.gravity, this.ctx, this.canvas);
+        let ball = new Ball(xPos, yPos, 10, this.gravity, this.rest, this.ctx, this.canvas);
         this.balls.allBalls.push(ball);
         console.log('all balls now: ', this.balls.allBalls)
         // this.balls.update();
@@ -107,9 +108,19 @@ class BubbleCanvas extends Component {
     };
 
     gravSlider = (event, value) => {
-        console.log("new gravity is ", value)
+        // console.log("new gravity is ", value)
         this.gravity = value;
+        this.balls.allBalls.forEach(ball => {
+            ball.grav = value;
+        });
     };
+
+    restitutionSlider = (event, value) => {
+        this.rest = value;
+        this.balls.allBalls.forEach(ball => {
+            ball.rest = value;
+        });
+    }
 
 
 
@@ -127,12 +138,25 @@ class BubbleCanvas extends Component {
                 </Typography>
                 <Slider
                     aria-labelledby="continuous-slider"
-                    defaultValue={0.5}
+                    defaultValue={this.gravity}
                     step={0.01}
                     max={1}
                     min={0}
                     valueLabelDisplay="on"
                     onChange={this.gravSlider}
+                />
+
+                <Typography id="continuous-slider" gutterBottom>
+                    Coefficient of restitution
+                </Typography>
+                <Slider
+                    aria-labelledby="continuous-slider"
+                    defaultValue={this.rest}
+                    step={0.01}
+                    max={1}
+                    min={0.1}
+                    valueLabelDisplay="on"
+                    onChange={this.restitutionSlider}
                 />
             </div>
         );
