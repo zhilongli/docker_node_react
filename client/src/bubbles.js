@@ -85,8 +85,6 @@ class BubbleCanvas extends Component {
         const rect = this.canvas.getBoundingClientRect();
         const xPos = ev.clientX - rect.left;
         const yPos = ev.clientY - rect.top;
-        const dx = 1;
-        const dy = 1;
         this.ctx.beginPath();
         this.ctx.arc(xPos, yPos, radius, 0, Math.PI * 2, false);
         this.ctx.strokeStyle = 'blue';
