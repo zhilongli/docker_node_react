@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import UserTable from './table'
 import DrawCanvas from './animations'
 import BubblesCanvas from './bubbles'
-import Boids from './boids'
+import BoidsCanvas from './boids'
 
 
 class Home extends Component {
@@ -69,7 +69,7 @@ class App extends Component {
             <Route exact path='/about' component={About}></Route>
             <Route exact path='/drawcanvas' component={DrawCanvas}></Route>
             <Route exact path='/bubbles' component={BubblesCanvas}></Route>
-            <Route exact path='/boids' component={Boids}></Route>
+            <Route exact path='/boids' component={BoidsCanvas}></Route>
           </Switch>
         </div>
       </Router>
