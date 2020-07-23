@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Slider, Switch } from "@material-ui/core";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -132,6 +132,7 @@ class Boids {
         this.cohesion = cohesion;
         this.repulsion = repulsion;
         this.velSim = velSim;
+        this.follow = true;
     };
 
     update = () => {
@@ -148,7 +149,9 @@ class Boids {
         boid.comRule(this.allBoids, this.speed, this.cohesion);
         boid.collisionRule(this.allBoids, this.speed, this.repulsion);
         boid.velocityRule(this.allBoids, this.speed, this.velSim);
-        boid.followMouse(this.mouseX, this.mouseY);
+        if (this.follow) {
+            boid.followMouse(this.mouseX, this.mouseY);
+        }
     };
 }
 
@@ -166,9 +169,10 @@ function BoidsCanvas() {
     var mouseX = 0;
     var mouseY = 0;
     var boids = new Boids(null, null, simSpeed, mouseX, mouseY, cohesion, repulsion, velSim);
+    var rect = { left: 0, top: 0 };
+    var checked = false;
 
-
-    // const [counter, setCount] = useState(0);
+    // const [checked, setChecked] = React.useState(false);
 
     useEffect(() => { //want to control this to only run on didMount and not didUpdate
         canvas = canvasRef.current;
@@ -181,7 +185,10 @@ function BoidsCanvas() {
     function clickHandler(ev) {
         console.log(canvas)
         counter += 1;
-        const rect = canvas.getBoundingClientRect();
+        while (canvas == null) {
+            continue;
+        }
+        rect = canvas.getBoundingClientRect();
         const xPos = ev.clientX - rect.left;
         const yPos = ev.clientY - rect.top;
         let boid = new Boid(xPos, yPos, ctx, counter);
@@ -206,13 +213,18 @@ function BoidsCanvas() {
     };
 
     function mousePosUpdate(ev) {
-        const rect = canvas.getBoundingClientRect();
+        while (canvas == null) {
+            continue;
+        }
+        rect = canvas.getBoundingClientRect();
         boids.mouseX = ev.clientX - rect.left;
         boids.mouseY = ev.clientY - rect.top;
     };
 
-    function switchChange(ev){
-        
+    const toggleChecked = () => {
+        checked = !checked;
+        boids.follow = checked;
+        return checked;
     };
 
     return (
@@ -228,8 +240,8 @@ function BoidsCanvas() {
                 Toggle follow mouse
                 </Typography>
             <Switch
-                checked={true}
-                onChange={switchChange}
+                checked={checked}
+                onChange={toggleChecked}
                 name="Mouse switch"
                 color="primary"
             />
